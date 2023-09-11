@@ -1,7 +1,6 @@
 package br.com.fiap.control;
 
 import java.io.IOException;
-import java.sql.SQLException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,32 +9,28 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import br.com.fiap.DAO.UsuarioDAO;
-import br.com.fiap.model.*;
+import br.com.fiap.model.Usuario;
 
-@WebServlet("/novoUsuario")
-public class NovoUsuarioServlet extends HttpServlet {
+@WebServlet("/alteraUsuario")
+public class AlteraUsuarioServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
-		response.sendRedirect("formNovoUsuario.jsp");
-	}
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+	protected void service(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
+		UsuarioDAO dao = new UsuarioDAO();
+		int id = Integer.parseInt(request.getParameter("id"));
 		String nomeUsuario = request.getParameter("nome");
 		String emailUsuario = request.getParameter("email");
 		String telefoneUsuario = request.getParameter("telefone");
 		String senhaUsuario = request.getParameter("senha");
 
-		Usuario usuario = new Usuario(nomeUsuario, emailUsuario, telefoneUsuario, senhaUsuario);
-		
-		UsuarioDAO dao = new UsuarioDAO();
-		
-		dao.adiciona(usuario);
-		
-		request.setAttribute("usuario", usuario);
+		Usuario usuario = dao.buscaUsuarioID(id);
+		usuario.setNome(nomeUsuario);
+		usuario.setEmail(emailUsuario);
+		usuario.setTelefone(telefoneUsuario);
+		usuario.setSenha(senhaUsuario);
+
 		response.sendRedirect("listaUsuarios");
 
 	}
